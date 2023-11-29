@@ -1,2 +1,2 @@
 # quilldashboard
-quill project - sample dashboard (first edit)
+quill project - sample dashboard (second edit)
