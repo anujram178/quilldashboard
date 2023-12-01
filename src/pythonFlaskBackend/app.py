@@ -72,6 +72,7 @@ def charts(dashboardName):
         bucketDataPrev = bucketizeData(dataPrev, bucketSize, endDatePrev, dateFilterField, yAxisField)
         
         mergeBucketData(bucketData, bucketDataPrev, yAxisField)
+        print(bucketDataPrev)
         chartInfoList.append({"chartName": chartName, "xAxisField": xAxisField, "yAxisField": yAxisField, "id": id, "chartType": chartType, "data": bucketData})
 
 
