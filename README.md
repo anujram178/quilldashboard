@@ -20,3 +20,6 @@ Backend is written in `Python/Flask` and data is stored in `supabase` which is `
 
 #### start the React frontend with `npm start`
 
+
+
+#### [Video Demo](https://youtu.be/uIOSIkL_w0s)
