@@ -26,7 +26,12 @@ function Dashboard({ dashboardName }) {
         });
     }, []);
 
-    const options = ["LAST_90_DAYS", "LAST_30_DAYS", "CURRENT_MONTH"];
+    const dateFilterOptions = ["LAST_90_DAYS", "LAST_30_DAYS", "CURRENT_MONTH"];
+    const prevDateFilterOptions = {
+        "LAST_90_DAYS": "PREVIOUS_90_DAYS",
+        "LAST_30_DAYS": "PREVIOUS_30_DAYS",
+        "CURRENT_MONTH": "LAST_MONTH"
+    };
 
     function changeDateFilter(selectedDateFilter) {
         const curDateFilter = selectedDateFilter.value;
@@ -41,16 +46,22 @@ function Dashboard({ dashboardName }) {
     return (
         <div className='dashboard'>
             <div className="dropdown">
-                <Dropdown
-                    options={options}
-                    value={dateFilter} // Set the value of the dropdown to dateFilter state
-                    onChange={changeDateFilter}
-                />
-                <Dropdown
-                    options={options}
-                    value={dateFilter} // Set the value of the dropdown to dateFilter state
-                    onChange={changeDateFilter}
-                />
+                <div className='dropdownBar'>
+                    <Dropdown
+                        options={dateFilterOptions}
+                        value={dateFilter} 
+                        onChange={changeDateFilter}
+                    />
+                </div>
+                <h4> compared to</h4>
+                <div className="dropdownBar">
+                    <Dropdown
+                        options={dateFilterOptions}
+                        value={prevDateFilterOptions[dateFilter]} 
+                        onChange={changeDateFilter}
+                        disabled={true}
+                    />
+                </div>
             </div>
 
             {dashboardData.map((chart) => (
@@ -58,6 +69,7 @@ function Dashboard({ dashboardName }) {
                     key={chart.id} // Ensure a unique key for each Chart component
                     name={chart.chartName}
                     data={chart.data}
+                    chartType={chart.chartType}
                     xAxis={chart.xAxisField}
                     yAxis={chart.yAxisField}
                 />

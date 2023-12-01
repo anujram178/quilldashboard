@@ -30,13 +30,22 @@ def charts(dashboardName):
     startDate = None
 
     if dateRange == "LAST_90_DAYS":
-        startDate = endDate - timedelta(90)
-    elif dateRange == "LAST_30_DAYS":
-        startDate = endDate - timedelta(30)
-    else:
-        startDate = endDate.replace(day=1)
+        startDate = endDatePrev = endDate - timedelta(90)
+        startDatePrev = endDatePrev - timedelta(90)
 
+    elif dateRange == "LAST_30_DAYS":
+        startDate = endDatePrev = endDate - timedelta(30)
+        startDatePrev = endDatePrev - timedelta(30)
+
+    else:
+        startDate = endDatePrev = endDate.replace(day=1)
+        startDatePrev = endDatePrev.replace(day=1) 
+
+
+    # convert datetime objects to strings - from datetime obj -> "2023-11-26"
+    # because we send a supabase query which uses only date strings
     startDate, endDate = convertDatetimeToDate(startDate), convertDatetimeToDate(endDate)
+    startDatePrev, endDatePrev = convertDatetimeToDate(startDatePrev), convertDatetimeToDate(endDatePrev)
 
     response = supabase.table('Charts').select('*').eq('dashboard', dashboardName).execute()
     chartInfoList = []
@@ -52,11 +61,17 @@ def charts(dashboardName):
         fields = sqlQuery.split(" ")[1]
         table = chartData["dateFilterTable"]
         dateFilterField = chartData["dateFilterField"]
+
         chartInfo = supabase.table(table).select(fields).gte(dateFilterField, startDate).lte(dateFilterField, endDate).order(dateFilterField).execute()
+        chartInfoPrev = supabase.table(table).select(fields).gte(dateFilterField, startDatePrev).lte(dateFilterField, endDatePrev).order(dateFilterField).execute()
         data = dict(chartInfo)["data"]
+        dataPrev = dict(chartInfoPrev)["data"]
 
         bucketSize = 30 if dateRange == "LAST_90_DAYS" else 7
         bucketData = bucketizeData(data, bucketSize, endDate, dateFilterField, yAxisField)
+        bucketDataPrev = bucketizeData(dataPrev, bucketSize, endDatePrev, dateFilterField, yAxisField)
+        
+        mergeBucketData(bucketData, bucketDataPrev, yAxisField)
         chartInfoList.append({"chartName": chartName, "xAxisField": xAxisField, "yAxisField": yAxisField, "id": id, "chartType": chartType, "data": bucketData})
 
 
@@ -91,6 +106,23 @@ def bucketizeData(data, bucketSize, endDate, dateFilterField, yAxisField):
         newBucketedData.append(bucket_data)
 
     return newBucketedData
+
+def mergeBucketData(bucketData, bucketDataPrev, yAxisField):
+    # bucketData and bucketDataPrev will both be sorted
+    # so go through bucketData and put the bucketDataPrev value inside bucketData
+
+    # start with the last item in bucketData
+    curIndex = -1
+    prevLength = len(bucketDataPrev)
+
+    for i in range(len(bucketData), -1, -1):
+        if -curIndex < prevLength:
+            bucketData[curIndex][yAxisField + "Prev"] = bucketDataPrev[curIndex][yAxisField]
+        else:
+            break
+        curIndex -= 1
+    
+    return bucketData
 
 
 
