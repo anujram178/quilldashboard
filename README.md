@@ -9,7 +9,7 @@ Backend is written in `Python/Flask` and data is stored in `supabase` which is `
 
 # Run backend
 
-#### `cd into pythonBackend` and run `python3 app.py`
+#### `cd into pythonBackend` => `pip install requirements.txt` and run `python3 app.py`
 
 
 # Run frontend
