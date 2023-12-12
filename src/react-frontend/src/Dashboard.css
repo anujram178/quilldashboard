@@ -9,12 +9,12 @@
     display: flex;
     justify-self: center;
     align-items: center;
-    width: 800px;
+    width: 1200px;
     height: 160px;
 }
 
 .dropdownBar {
-    width: 400px;
+    width: 300px;
     margin-left: 50px;
     margin-right: 20px;
 }

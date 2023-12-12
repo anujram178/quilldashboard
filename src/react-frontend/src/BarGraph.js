@@ -5,8 +5,6 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 
 
 function BarGraph({ data, xAxis, yAxis }) {
-    console.log(data);
-
     return (
             <BarChart width={830} height={450} data={data}
                 margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
