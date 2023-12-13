@@ -191,7 +191,7 @@ def bucketizeData(data, bucketSize, endDate, dateFilterField, yAxisField):
         if type(dateToCheck) == str:
             dateToCheck = datetime.strptime(dataPoint[dateFilterField], '%Y-%m-%d')  # Convert string to datetime
         
-        bucket_start = dateToCheck - timedelta(days=dateToCheck.day)
+        bucket_start = dateToCheck - timedelta(days=dateToCheck.day - 1)
         if bucketSize == 7:
             bucket_start = dateToCheck - timedelta(days=dateToCheck.weekday())  # Align to the start of the week
         
